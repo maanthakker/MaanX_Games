@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <symbol id="mark" viewBox="0 0 32 32">
+    <rect width="32" height="32" rx="8" fill="#ffc53d"/>
+    <path d="M7 24V8h4.2l4.8 7.4L20.8 8H25v16h-4V14.9l-5 7.2-5-7.2V24z" fill="#1b1400"/>
+  </symbol>
+  <use href="#mark"/>
+</svg>

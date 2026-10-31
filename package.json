@@ -1,0 +1,30 @@
+{
+  "name": "maanx-games",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MaanX Games: every game Maan Thakker (@maanthakker) has built, playable online in one place.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "vite build games/rps/client",
+    "start": "node server.js",
+    "dev": "node --watch-path=server.js --watch-path=games server.js",
+    "test": "node games/rps/shared/game.test.js && node games/rps/server/sim.test.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "socket.io": "^4.8.1",
+    "three": "0.128.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "socket.io-client": "^4.8.1",
+    "vite": "^5.4.14"
+  }
+}

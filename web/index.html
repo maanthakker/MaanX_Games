@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MaanX Games</title>
+<meta name="description" content="Every game Maan Thakker has built, playable online with friends. Earn XP, keep a streak, unlock achievements across all of them.">
+<meta name="theme-color" content="#0d0e11">
+<link rel="icon" href="/maanx/logo.svg">
+<link rel="preload" href="/maanx/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/maanx/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/maanx/tokens.css">
+<link rel="stylesheet" href="/maanx/store.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <a class="brand" href="/" aria-label="MaanX Games home">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><use href="/maanx/logo.svg#mark"/></svg>
+    <span class="word">MaanX<span class="word-2">Games</span></span>
+  </a>
+  <nav class="links" aria-label="Store">
+    <a href="/" data-nav="home">Store</a>
+    <a href="/library" data-nav="library">Library</a>
+    <a href="/achievements" data-nav="achievements">Achievements</a>
+    <a href="/quests" data-nav="quests">Quests</a>
+  </nav>
+  <form class="search" role="search" id="search-form">
+    <svg aria-hidden="true"><use href="/maanx/icons.svg#i-search"/></svg>
+    <input id="q" type="search" placeholder="Search games" aria-label="Search games" autocomplete="off">
+  </form>
+  <a class="player" href="/profile" id="player-chip" aria-label="Your profile">
+    <span class="lvl-ring" id="chip-ring"><span class="num" id="chip-level">1</span></span>
+    <span class="player-text"><b id="chip-title">Rookie</b><span class="num" id="chip-xp">0 XP</span></span>
+  </a>
+</header>
+
+<main id="main" tabindex="-1"></main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <p class="foot-brand">MaanX Games</p>
+    <p>Every game here is made by Maan Thakker, <a href="https://github.com/maanthakker" rel="noopener">@maanthakker</a> on GitHub. Proud dad of @maanthakker, building the future together.</p>
+    <p class="foot-small">No ads, no purchases, no accounts needed for progress. Progress is saved in this browser.</p>
+  </div>
+</footer>
+
+<nav class="tabs" aria-label="Sections">
+  <a href="/" data-nav="home"><svg aria-hidden="true"><use href="/maanx/icons.svg#i-house"/></svg><span>Store</span></a>
+  <a href="/library" data-nav="library"><svg aria-hidden="true"><use href="/maanx/icons.svg#i-library-big"/></svg><span>Library</span></a>
+  <a href="/achievements" data-nav="achievements"><svg aria-hidden="true"><use href="/maanx/icons.svg#i-trophy"/></svg><span>Awards</span></a>
+  <a href="/quests" data-nav="quests"><svg aria-hidden="true"><use href="/maanx/icons.svg#i-target"/></svg><span>Quests</span></a>
+  <a href="/profile" data-nav="profile"><svg aria-hidden="true"><use href="/maanx/icons.svg#i-user-round"/></svg><span>You</span></a>
+</nav>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<script src="/maanx/catalog.js"></script>
+<script src="/maanx/progress.js"></script>
+<script src="/maanx/store.js"></script>
+</body>
+</html>

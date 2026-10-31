@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Voxel Realms · MaanX Games</title>
+<link rel="icon" href="/voxelrealms/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/voxelrealms/game.css">
+<script src="/maanx/bridge.js" data-game="voxel-realms" defer></script>
+</head>
+<body>
+<div id="app"><div class="ov"><div class="card" style="text-align:center"><h1>Voxel Realms</h1><p id="stat">Finding your world…</p><div id="extra"></div></div></div></div>
+<script>
+(function () {
+  const KEY = 'voxelrealms:name';
+  const room = (location.pathname.split('/').pop() || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const $ = (s) => document.querySelector(s);
+  const loadName = () => { try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } };
+  const storeName = (n) => { try { localStorage.setItem(KEY, n); } catch (e) {} };
+  const loadScript = (src) => new Promise((ok) => { const el = document.createElement('script'); el.src = src; el.onload = () => ok(true); el.onerror = () => ok(false); document.body.append(el); });
+
+  function play(name) {
+    window.VR_ROOM = room; window.VR_NAME = name;
+    fetch('/voxelrealms/markup.html').then((r) => r.text()).then((html) => {
+      $('#app').innerHTML = html;
+      loadScript('/vendor/three.min.js').then((ok) => { if (!ok) window.__tfail = 1; loadScript('/voxelrealms/game.js'); });
+    });
+  }
+
+  fetch('/voxelrealms/api/worlds/' + room).then((r) => {
+    if (r.status === 404 || !r.ok) throw 0;
+    const n = loadName();
+    if (n) return play(n);
+    $('#stat').innerHTML = 'You’re joining world <b></b>. Pick a name.';
+    $('#stat b').textContent = room;
+    $('#extra').innerHTML = '<form id="nf"><input id="ps" maxlength="16" placeholder="Your name" autocomplete="nickname" aria-label="Your name" autofocus><button class="big" disabled>Join world</button></form>';
+    const inp = $('#ps'), btn = $('#nf button');
+    inp.oninput = () => { btn.disabled = !inp.value.trim(); };
+    $('#nf').onsubmit = (e) => { e.preventDefault(); const v = inp.value.trim(); if (!v) return; storeName(v); play(v); };
+  }).catch(() => {
+    $('#stat').innerHTML = 'World <b></b> doesn’t exist or the server can’t be reached.';
+    $('#stat b').textContent = room || '?';
+    $('#extra').innerHTML = '<a class="big" style="display:block;text-decoration:none" href="/voxelrealms/">Back to the lobby</a>';
+  });
+})();
+</script>
+</body>
+</html>

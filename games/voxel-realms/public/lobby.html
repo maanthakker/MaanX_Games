@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Voxel Realms lobby · MaanX Games</title>
+<meta name="description" content="Create a Voxel Realms world or join a friend's. A multiplayer voxel sandbox made by Maan Thakker.">
+<link rel="icon" href="/voxelrealms/icon.svg">
+<link rel="stylesheet" href="/maanx/tokens.css">
+<style>
+  body{min-height:100dvh;display:grid;place-items:center;padding:24px 16px;background:var(--bg)}
+  .shell{width:min(100%,960px);display:grid;grid-template-columns:1.15fr 1fr;border-radius:var(--r-lg);overflow:hidden;background:var(--s1);box-shadow:var(--shadow-lg)}
+  .art{position:relative;min-height:420px;background:#0b1b12 url(/media/voxel-realms/shot-1.jpg) center/cover}
+  .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,14,17,0) 45%,rgba(13,14,17,.85))}
+  .art p{position:absolute;left:24px;right:24px;bottom:20px;z-index:1;margin:0;color:var(--t2);font-size:14px}
+  .art p b{color:var(--t1)}
+  .panel{padding:32px 32px 28px;display:flex;flex-direction:column}
+  .home{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;min-height:44px;color:var(--t2);text-decoration:none;font-weight:600;font-size:14px;margin:-12px 0 12px}
+  .home:hover{color:var(--t1)}.home svg{width:18px;height:18px}
+  h1{font:800 clamp(34px,4vw,44px)/1 var(--display);font-stretch:118%;letter-spacing:-.02em;margin:0 0 10px}
+  .sub{color:var(--t2);margin:0 0 28px;max-width:38ch}
+  label{display:block;font-size:13px;font-weight:600;color:var(--t2);margin-bottom:8px}
+  .in{width:100%;min-height:48px;padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--line-2);background:var(--s2);color:var(--t1);font:inherit;font-size:16px}
+  .in:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-color:transparent}
+  .row{display:flex;gap:8px}
+  .row .in{text-transform:uppercase;letter-spacing:.12em}
+  .or{display:flex;align-items:center;gap:12px;margin:22px 0 14px;color:var(--t3);font-size:13px}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .err{color:var(--danger);font-size:14px;margin:14px 0 0;min-height:1.3em}
+  .btn.wide{width:100%;margin-top:14px}
+  @media (max-width:760px){.shell{grid-template-columns:1fr}.art{min-height:200px}.panel{padding:28px 20px 22px}}
+</style>
+<script src="/maanx/bridge.js" data-game="voxel-realms" defer></script>
+</head>
+<body>
+<main class="shell">
+  <div class="art" role="img" aria-label="A Voxel Realms landscape"><p><b>Voxel Realms</b> by Maan Thakker · 13 biomes, caves, villages, the Nether, the End</p></div>
+  <section class="panel">
+    <a class="home" href="/"><svg aria-hidden="true"><use href="/maanx/icons.svg#i-chevron-left"/></svg>MaanX Games</a>
+    <h1>Voxel Realms</h1>
+    <p class="sub">Build an endless voxel world together. Create a world, share the link, and friends join you instantly.</p>
+    <label for="name">Your name</label>
+    <input id="name" class="in" maxlength="16" placeholder="Steve" autocomplete="nickname">
+    <button id="create" class="btn primary wide" disabled>Create a new world</button>
+    <div class="or">or join a friend</div>
+    <form id="join" class="row">
+      <input id="code" class="in" maxlength="12" placeholder="World code" aria-label="World code" autocomplete="off">
+      <button class="btn" disabled>Join</button>
+    </form>
+    <p class="err" id="err" role="alert"></p>
+  </section>
+</main>
+<script>
+(function () {
+  const KEY = 'voxelrealms:name', $ = (s) => document.querySelector(s);
+  const name = $('#name'), code = $('#code'), create = $('#create'), joinBtn = $('#join button'), err = $('#err');
+  try { name.value = localStorage.getItem(KEY) || ''; } catch (e) {}
+  let busy = false;
+  const sync = () => { const ok = !!name.value.trim() && !busy; create.disabled = !ok; joinBtn.disabled = !ok || !code.value.trim(); };
+  name.oninput = code.oninput = () => { code.value = code.value.toUpperCase(); sync(); };
+  sync();
+  const go = (c) => { try { localStorage.setItem(KEY, name.value.trim()); } catch (e) {} location.href = '/voxelrealms/play/' + c; };
+  create.onclick = async () => {
+    busy = true; sync(); err.textContent = ''; create.textContent = 'Creating your world…';
+    try {
+      const r = await fetch('/voxelrealms/api/worlds', { method: 'POST' });
+      if (!r.ok) throw 0;
+      window.MaanX && MaanX.emit('vr:create');
+      go((await r.json()).code);
+    } catch (e) { err.textContent = 'Couldn’t create a world. Check your connection and try again.'; busy = false; create.textContent = 'Create a new world'; sync(); }
+  };
+  $('#join').onsubmit = async (e) => {
+    e.preventDefault();
+    const c = code.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (!c) return;
+    busy = true; sync(); err.textContent = '';
+    const r = await fetch('/voxelrealms/api/worlds/' + c).catch(() => null);
+    if (r && r.ok) return go(c);
+    err.textContent = r && r.status === 404 ? 'No world with code ' + c + '. Check the code with your friend.' : 'Couldn’t reach the server. Try again.';
+    busy = false; sync();
+  };
+})();
+</script>
+</body>
+</html>
