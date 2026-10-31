@@ -4,9 +4,11 @@
   "private": true,
   "description": "MaanX Games: every game Maan Thakker (@maanthakker) has built, playable online in one place.",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "build": "vite build games/rps/client",
+    "build": "npm install --include=dev --no-audit --no-fund && vite build games/rps/client",
     "start": "node server.js",
     "dev": "node --watch-path=server.js --watch-path=games server.js",
     "test": "node games/rps/shared/game.test.js && node games/rps/server/sim.test.mjs"
